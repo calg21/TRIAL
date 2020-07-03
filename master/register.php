@@ -32,7 +32,7 @@
                          <form action="" method="post" id = "admin_register_form">
 
                                <label >Enter Email Address</label>
-                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control"/>
+                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control"   data-parsley-checkemail data-parsley-checkemail-message="email exist"/>
                          
                          <div class="form-group">
                          
@@ -80,3 +80,37 @@
     </div>
 </body>
 </html>
+<script>
+
+
+  $(document).ready(functoin(){
+     
+    window.ParsleyValidator.addValidator('checkemail',
+      validateString : function(value)
+      {
+          return $.ajax({
+
+    url:"ajax_action.php",
+    method:"POST",
+    data :{
+        page:'register', action:'check-email',
+        email:value
+    },
+    dataType:"jason",
+    success:function(data)
+        {
+       return true;
+
+         }
+
+          });
+      }
+    
+    
+    });
+
+
+  });
+
+  $('#admin_register_form').parsley();
+</script>

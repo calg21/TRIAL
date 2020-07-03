@@ -32,7 +32,8 @@
                          <form action="" method="post" id = "admin_register_form">
 
                                <label >Enter Email Address</label>
-                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control"/>
+                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control" data-parsely-checkemail 
+                                  data-parsely-checkemail-message="email already exist"/>
                          
                          <div class="form-group">
                          
@@ -80,3 +81,26 @@
     </div>
 </body>
 </html>
+
+<script>
+
+$(document).ready(function(){
+
+window.ParsleyValidator.addValidator('checkemail',
+
+  validateString:function(value){
+        return $.ajax({
+
+       url:"ajax_action.php",
+
+        });
+
+  }
+
+
+);
+
+
+});
+
+</script>

@@ -32,8 +32,7 @@
                          <form action="" method="post" id = "admin_register_form">
 
                                <label >Enter Email Address</label>
-                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control" data-parsely-checkemail 
-                                  data-parsely-checkemail-message="email already exist"/>
+                                <input type="text" name="admin_email_Address" id="admin_email_address" class="form-control"/>
                          
                          <div class="form-group">
                          
@@ -81,25 +80,70 @@
     </div>
 </body>
 </html>
-
 <script>
 
 $(document).ready(function(){
 
-window.ParsleyValidator.addValidator('checkemail',
+	window.ParsleyValidator.addValidator('checkemail', {
+    validateString: function(value)
+    {
+      return $.ajax({
+        url:"ajax_action.php",
+        method:"POST",
+        data:{page:'register', action:'check_email', email:value},
+        dataType:"json",
+        async: false,
+        success:function(data)
+        {
+          return true;
+        }
+      });
+    }
+  });
 
-  validateString:function(value){
-        return $.ajax({
+  $('#admin_register_form').parsley();
 
-       url:"ajax_action.php",
+  $('#admin_register_form').on('submit', function(event){
 
-        });
+    event.preventDefault();
 
-  }
+    $('#admin_email_address').attr('required', 'required');
 
+    $('#admin_email_address').attr('data-parsley-type', 'email');
 
-);
+    $('#admin_password').attr('required', 'required');
 
+    $('#confirm_admin_password').attr('required', 'required');
+
+    $('#confirm_admin_password').attr('data-parsley-equalto', '#admin_password');
+
+    if($('#admin_register_form').parsley().isValid())
+    {
+      $.ajax({
+        url:"ajax_action.php",
+        method:"POST",
+        data:$(this).serialize(),
+        dataType:"json",
+        beforeSend:function(){
+          $('#admin_register').attr('disabled', 'disabled');
+          $('#admin_register').val('please wait...');
+        },
+        success:function(data)
+        {
+          if(data.success)
+          {
+            $('#message').html('<div class="alert alert-success">Please check your email</div>');
+            $('#admin_register_form')[0].reset();
+            $('#admin_register_form').parsley().reset();
+          }
+
+          $('#admin_register').attr('disabled', false);
+          $('#admin_register').val('Register');
+        }
+      });
+    }
+
+  });
 
 });
 
